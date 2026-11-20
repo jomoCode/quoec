@@ -4,7 +4,7 @@
  */
 
 /** Bump when the event shape changes so old/new rows can be told apart. */
-export const SCHEMA_VERSION = 1;
+export const SCHEMA_VERSION = 2; // v2: attribution captured per session; adds utm_term, utm_content, gclid, fbclid
 
 /**
  * Event names: specific actions, snake_case, <= 40 chars (GA4 rules).
@@ -56,7 +56,25 @@ export interface TrackInput {
   once?: 'session' | 'page';
 }
 
-export interface AnalyticsEvent {
+/**
+ * Where a session came from. Captured once, from the landing URL, when the session starts,
+ * and copied onto every event in that session.
+ */
+export interface Attribution {
+  /** Hostname of the external site that linked here (e.g. "www.google.com"). Null for direct visits and internal navigation. */
+  referrer: string | null;
+  utm_source: string | null; // where: instagram, google, newsletter
+  utm_medium: string | null; // channel type: cpc, paid_social, email
+  utm_campaign: string | null; // which promotion: lekki_launch
+  utm_term: string | null; // paid search keyword
+  utm_content: string | null; // which ad/link variant was clicked
+  /** Google Ads auto-tagging click id. Present = came from a Google ad, even without UTMs. */
+  gclid: string | null;
+  /** Meta (Facebook/Instagram) click id. Present = came from a Meta link or ad. */
+  fbclid: string | null;
+}
+
+export interface AnalyticsEvent extends Attribution {
   event_id: string; // idempotency key — backend rejects duplicates
   name: EventName;
   tag: AnalyticsTag;
@@ -65,10 +83,6 @@ export interface AnalyticsEvent {
   session_id: string;
   seq: number; // order within the session
   page_path: string;
-  referrer: string | null;
-  utm_source: string | null;
-  utm_medium: string | null;
-  utm_campaign: string | null;
   device_type: 'mobile' | 'tablet' | 'desktop';
   viewport_width: number;
   language: string;
