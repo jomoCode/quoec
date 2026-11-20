@@ -1,6 +1,7 @@
 import { getSession, getVisitorId, saveSession } from './identity';
 import { local, readJSON, removeKey, writeJSON } from '../utils/storage';
 import { uuid } from '../utils/uuid';
+import { detectEnv, deviceType, isBot } from '../utils/environment';
 import { initTransport, send } from './transport';
 import { SCHEMA_VERSION, TAGS, type AnalyticsEvent, type TrackInput } from './types';
 
@@ -16,26 +17,6 @@ function isInternal(): boolean {
   if (flag === '1') writeJSON(local, INTERNAL_KEY, true);
   if (flag === '0') removeKey(local, INTERNAL_KEY);
   return readJSON<boolean>(local, INTERNAL_KEY) === true;
-}
-
-function isBot(): boolean {
-  return (
-    navigator.webdriver === true ||
-    /bot|crawl|spider|slurp|headless|lighthouse|prerender/i.test(navigator.userAgent)
-  );
-}
-
-function detectEnv(): 'prod' | 'dev' {
-  const host = window.location.hostname;
-  if (import.meta.env.DEV) return 'dev';
-  if (host === 'localhost' || host === '127.0.0.1' || host.endsWith('.local')) return 'dev';
-  return 'prod';
-}
-
-function deviceType(width: number): AnalyticsEvent['device_type'] {
-  if (width < 768) return 'mobile';
-  if (width < 1024) return 'tablet';
-  return 'desktop';
 }
 
 /**

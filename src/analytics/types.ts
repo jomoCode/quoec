@@ -3,6 +3,8 @@
  * Rows in the backend `analytics_events` table and GA4 events are both derived from `AnalyticsEvent`.
  */
 
+import type { AppEnv, DeviceType } from '../utils/environment';
+
 /** Bump when the event shape changes so old/new rows can be told apart. */
 export const SCHEMA_VERSION = 2; // v2: attribution captured per session; adds utm_term, utm_content, gclid, fbclid
 
@@ -83,10 +85,10 @@ export interface AnalyticsEvent extends Attribution {
   session_id: string;
   seq: number; // order within the session
   page_path: string;
-  device_type: 'mobile' | 'tablet' | 'desktop';
+  device_type: DeviceType;
   viewport_width: number;
   language: string;
-  env: 'prod' | 'dev';
+  env: AppEnv;
   schema_version: number;
   client_ts: string; // ISO; server adds its own server_ts
   meta?: AnalyticsMeta;
