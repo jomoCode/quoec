@@ -34,7 +34,7 @@ function DevelopmentCard({ property }: { property: Development }) {
     <article className="bg-white border border-[#E5E4DF] rounded-lg overflow-hidden flex flex-col justify-between transition-shadow duration-200 hover:shadow-md">
       <div>
         {/* Image Frame — property view seen through a window */}
-        <div className="relative aspect-1672/941 bg-[#1A140F] overflow-hidden">
+        <div className="relative aspect-[2/1] bg-[#1A140F] overflow-hidden">
           {/* View behind the glass (inset matches the window PNG's transparent area) */}
           <div className="absolute top-[5%] bottom-[7.5%] left-[10%] right-[10%] z-0">
             <ArchitecturalImage
@@ -77,9 +77,9 @@ function DevelopmentCard({ property }: { property: Development }) {
         </div>
 
         {/* Card Body */}
-        <div className="p-6">
+        <div className="px-5 pt-4 pb-4">
           {/* Unboxed metadata with typographic separator (Zero-Pill Discipline) */}
-          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 mb-2.5">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 mb-1.5">
             <span className="inline-flex items-center gap-1 text-slate-700">
               <MapPin className="w-3.5 h-3.5 text-[#B4852B]" aria-hidden="true" />
               {property.location}
@@ -104,11 +104,11 @@ function DevelopmentCard({ property }: { property: Development }) {
             )}
           </div>
 
-          <h3 className="font-serif text-2xl font-semibold text-[#0B1829] mb-2.5">
+          <h3 className="font-serif text-xl font-semibold text-[#0B1829] mb-1.5">
             {property.name}
           </h3>
 
-          <p className="text-sm text-slate-600 leading-relaxed mb-4">
+          <p className="text-sm text-slate-600 leading-relaxed line-clamp-2 mb-2">
             {property.description}
           </p>
 
@@ -121,7 +121,7 @@ function DevelopmentCard({ property }: { property: Development }) {
       </div>
 
       {/* Action Footer */}
-      <div className="px-6 py-4 border-t border-[#ECEAE4] bg-[#FCFCFA]">
+      <div className="px-5 py-3 border-t border-[#ECEAE4] bg-[#FCFCFA]">
         {isActiveLink ? (
           <a
             href={property.externalUrl}
@@ -159,9 +159,9 @@ export function DevelopmentsSection({ developments, loading }: DevelopmentsSecti
   const filters: StatusFilter[] = ['All', 'Ongoing', 'Upcoming', 'Completed'];
 
   return (
-    <section id="developments" className="bg-[#F8F8F6] py-20 lg:py-24">
+    <section id="developments" className="bg-[#F8F8F6] pt-10 pb-16 lg:pt-12 lg:pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
           <div>
             <p className="text-sm font-medium text-[#B4852B] mb-2">
               Our Developments
@@ -216,7 +216,7 @@ export function DevelopmentsSection({ developments, loading }: DevelopmentsSecti
                 key={n}
                 className="bg-white border border-[#E5E4DF] rounded-lg overflow-hidden animate-pulse"
               >
-                <div className="aspect-1672/941 bg-[#ECEAE4]" />
+                <div className="aspect-[2/1] bg-[#ECEAE4]" />
                 <div className="p-6 space-y-3">
                   <div className="h-3 w-36 bg-[#ECEAE4] rounded" />
                   <div className="h-6 w-48 bg-[#ECEAE4] rounded" />
