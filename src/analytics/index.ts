@@ -1,5 +1,5 @@
-export { track, withTracking } from './track';
-export { TAGS, SCHEMA_VERSION } from './types';
+export { track, withTracking } from "./track";
+export { TAGS, SCHEMA_VERSION, WEBSITE_ID } from "./types";
 export type {
   AnalyticsEvent,
   AnalyticsMeta,
@@ -7,4 +7,4 @@ export type {
   AnalyticsTag,
   EventName,
   TrackInput,
-} from './types';
+} from "./types";

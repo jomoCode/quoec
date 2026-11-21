@@ -1,20 +1,21 @@
-import { useState, type FormEvent } from 'react';
-import { ArrowRight, CheckCircle2, Mail, MapPin, Phone } from 'lucide-react';
-import type { Development } from '../types/property';
-import { ArchitecturalImage } from './ArchitecturalImage';
-import { GlassButton } from './GlassButton';
-import { track } from '../analytics';
+import { useState, type FormEvent } from "react";
+import { ArrowRight, CheckCircle2, Mail, MapPin, Phone } from "lucide-react";
+import type { Development } from "../types/property";
+import { ArchitecturalImage } from "./ArchitecturalImage";
+import { GlassButton } from "./GlassButton";
+import { track } from "../analytics";
+import { apiUrl } from "../utils/api";
 
 interface ContactSectionProps {
   developments: Development[];
 }
 
 export function ContactSection({ developments }: ContactSectionProps) {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [propertyInterest, setPropertyInterest] = useState('The Citadel');
-  const [message, setMessage] = useState('');
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [propertyInterest, setPropertyInterest] = useState("The Citadel");
+  const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -24,21 +25,23 @@ export function ContactSection({ developments }: ContactSectionProps) {
     setError(null);
 
     if (!fullName.trim() || !email.trim() || !message.trim()) {
-      setError('Please complete your name, email address, and enquiry message.');
+      setError(
+        "Please complete your name, email address, and enquiry message.",
+      );
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.trim())) {
-      setError('Please enter a valid email address.');
+      setError("Please enter a valid email address.");
       return;
     }
 
     setSubmitting(true);
     try {
-      const response = await fetch('/api/enquiries', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch(apiUrl("/api/enquiries"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           fullName: fullName.trim(),
           email: email.trim(),
@@ -49,31 +52,38 @@ export function ContactSection({ developments }: ContactSectionProps) {
       });
 
       if (!response.ok) {
-        const payload = (await response.json().catch(() => ({}))) as { error?: string };
-        throw new Error(payload.error || 'Unable to submit enquiry. Please try again.');
+        const payload = (await response.json().catch(() => ({}))) as {
+          error?: string;
+        };
+        throw new Error(
+          payload.error || "Unable to submit enquiry. Please try again.",
+        );
       }
 
       // Conversion is counted on confirmed success, not on the button press.
       track({
-        name: 'generate_lead',
-        tag: 'contact_form_submit',
+        name: "generate_lead",
+        tag: "contact_form_submit",
         meta: { property_interest: propertyInterest },
       });
 
       setSubmitted(true);
-      setFullName('');
-      setEmail('');
-      setPhone('');
-      setMessage('');
+      setFullName("");
+      setEmail("");
+      setPhone("");
+      setMessage("");
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unable to send enquiry.');
+      setError(err instanceof Error ? err.message : "Unable to send enquiry.");
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <section id="contact" className="relative bg-[#0B1829] bg-linear-to-r from-[#1C3F66] via-[#0B1829] to-[#1C3F66] text-white overflow-hidden">
+    <section
+      id="contact"
+      className="relative bg-[#0B1829] bg-linear-to-r from-[#1C3F66] via-[#0B1829] to-[#1C3F66] text-white overflow-hidden"
+    >
       {/* Twilight architectural backdrop */}
       <div className="absolute inset-0">
         <ArchitecturalImage
@@ -100,22 +110,31 @@ export function ContactSection({ developments }: ContactSectionProps) {
               Your Residence Awaits
             </h2>
             <p className="text-base text-slate-300 leading-relaxed">
-              Speak directly with the Quo Engineering &amp; Construction private advisory
-              team to arrange a private viewing at The Citadel or register early interest
-              in upcoming Abuja developments.
+              Speak directly with the Quo Engineering &amp; Construction private
+              advisory team to arrange a private viewing at The Citadel or
+              register early interest in upcoming Abuja developments.
             </p>
 
             <div className="pt-4 space-y-4 border-t border-white/15 text-sm text-slate-200">
               <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-[#E2B45A] mt-0.5 shrink-0" aria-hidden="true" />
+                <MapPin
+                  className="w-4 h-4 text-[#E2B45A] mt-0.5 shrink-0"
+                  aria-hidden="true"
+                />
                 <span>Abuja, Nigeria · Accra, Ghana</span>
               </div>
               <div className="flex items-start gap-3">
-                <Mail className="w-4 h-4 text-[#E2B45A] mt-0.5 shrink-0" aria-hidden="true" />
+                <Mail
+                  className="w-4 h-4 text-[#E2B45A] mt-0.5 shrink-0"
+                  aria-hidden="true"
+                />
                 <span>enquiries@quoec.com</span>
               </div>
               <div className="flex items-start gap-3">
-                <Phone className="w-4 h-4 text-[#E2B45A] mt-0.5 shrink-0" aria-hidden="true" />
+                <Phone
+                  className="w-4 h-4 text-[#E2B45A] mt-0.5 shrink-0"
+                  aria-hidden="true"
+                />
                 <span>Private Viewings by Appointment</span>
               </div>
             </div>
@@ -125,15 +144,22 @@ export function ContactSection({ developments }: ContactSectionProps) {
           <div className="lg:col-span-7 bg-white text-[#0B1829] rounded-lg p-7 sm:p-9 border border-white/10">
             {submitted ? (
               <div className="py-10 text-center space-y-4">
-                <CheckCircle2 className="w-10 h-10 text-emerald-700 mx-auto" aria-hidden="true" />
+                <CheckCircle2
+                  className="w-10 h-10 text-emerald-700 mx-auto"
+                  aria-hidden="true"
+                />
                 <h3 className="font-serif text-2xl font-semibold text-[#0B1829]">
                   Enquiry Received
                 </h3>
                 <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                  Thank you for contacting Quo Engineering &amp; Construction Limited. Our
-                  private advisory team will respond to your enquiry shortly.
+                  Thank you for contacting Quo Engineering &amp; Construction
+                  Limited. Our private advisory team will respond to your
+                  enquiry shortly.
                 </p>
-                <GlassButton onClick={() => setSubmitted(false)} className="mt-2">
+                <GlassButton
+                  onClick={() => setSubmitted(false)}
+                  className="mt-2"
+                >
                   Send Another Enquiry
                 </GlassButton>
               </div>
@@ -144,7 +170,8 @@ export function ContactSection({ developments }: ContactSectionProps) {
                     Request Development Information
                   </h3>
                   <p className="text-sm text-slate-600 mt-1">
-                    Register your interest or schedule a private consultation with our team.
+                    Register your interest or schedule a private consultation
+                    with our team.
                   </p>
                 </div>
 
@@ -229,7 +256,9 @@ export function ContactSection({ developments }: ContactSectionProps) {
                           {dev.name} ({dev.status})
                         </option>
                       ))}
-                      <option value="General Portfolio Enquiry">General Portfolio Enquiry</option>
+                      <option value="General Portfolio Enquiry">
+                        General Portfolio Enquiry
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -252,8 +281,14 @@ export function ContactSection({ developments }: ContactSectionProps) {
                   />
                 </div>
 
-                <GlassButton type="submit" disabled={submitting} className="px-6 py-3">
-                  <span>{submitting ? 'Submitting Enquiry...' : 'Submit Enquiry'}</span>
+                <GlassButton
+                  type="submit"
+                  disabled={submitting}
+                  className="px-6 py-3"
+                >
+                  <span>
+                    {submitting ? "Submitting Enquiry..." : "Submit Enquiry"}
+                  </span>
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </GlassButton>
               </form>
