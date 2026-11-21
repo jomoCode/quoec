@@ -4,6 +4,7 @@ import type { PanInfo } from 'motion/react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Lock, MapPin } from 'lucide-react';
 import type { Development } from '../types/property';
 import { ArchitecturalImage } from './ArchitecturalImage';
+import { PropertyVideo } from './PropertyVideo';
 
 interface FeaturedPropertiesProps {
   developments: Development[];
@@ -35,13 +36,22 @@ function FeaturedSlide({ property }: { property: Development }) {
 
   return (
     <div className="absolute inset-0">
-      <ArchitecturalImage
-        src={property.featuredImage}
-        alt={`${property.name} in ${property.location}`}
-        title={property.name}
-        dark
-        className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
-      />
+      {property.featuredVideo ? (
+        <PropertyVideo
+          src={property.featuredVideo}
+          poster={property.featuredImage}
+          label={`${property.name} in ${property.location}`}
+          className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+        />
+      ) : (
+        <ArchitecturalImage
+          src={property.featuredImage}
+          alt={`${property.name} in ${property.location}`}
+          title={property.name}
+          dark
+          className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+        />
+      )}
       <div
         className="absolute inset-0 bg-gradient-to-t from-[#07101C]/95 via-[#0B1829]/35 to-transparent"
         aria-hidden="true"

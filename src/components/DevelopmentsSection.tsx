@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import type { Development, DevelopmentStatus } from '../types/property';
 import { ArchitecturalImage } from './ArchitecturalImage';
+import { PropertyVideo } from './PropertyVideo';
 import windowFrame from '../assets/images/window-frame.png';
 
 interface DevelopmentsSectionProps {
@@ -12,14 +13,20 @@ interface DevelopmentsSectionProps {
 type StatusFilter = 'All' | DevelopmentStatus;
 
 function DevelopmentCard({ property }: { property: Development }) {
-  const images =
+  const photos = (
     property.galleryImages && property.galleryImages.length > 0
       ? property.galleryImages
-      : [property.featuredImage];
+      : [property.featuredImage]
+  ).filter(Boolean);
+  // The walkthrough video (if any) leads the gallery, followed by the photos.
+  const images: { kind: 'video' | 'image'; src: string }[] = [
+    ...(property.featuredVideo ? [{ kind: 'video' as const, src: property.featuredVideo }] : []),
+    ...photos.map((src) => ({ kind: 'image' as const, src })),
+  ];
   const [imageIndex, setImageIndex] = useState(0);
 
   const isActiveLink = !property.isComingSoon && Boolean(property.externalUrl);
-  const currentImg = images[imageIndex] || property.featuredImage;
+  const currentMedia = images[imageIndex] ?? { kind: 'image' as const, src: property.featuredImage };
 
   const cycleImage = (direction: 1 | -1) => {
     setImageIndex((prev) => {
@@ -37,12 +44,21 @@ function DevelopmentCard({ property }: { property: Development }) {
         <div className="relative aspect-[2/1] bg-[#1A140F] overflow-hidden">
           {/* View behind the glass (inset matches the window PNG's transparent area) */}
           <div className="absolute top-[5%] bottom-[7.5%] left-[10%] right-[10%] z-0">
-            <ArchitecturalImage
-              src={currentImg}
-              alt={`${property.name} architectural exterior`}
-              title={property.name}
-              className="w-full h-full object-cover"
-            />
+            {currentMedia.kind === 'video' ? (
+              <PropertyVideo
+                src={currentMedia.src}
+                poster={property.featuredImage}
+                label={`${property.name} walkthrough video`}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <ArchitecturalImage
+                src={currentMedia.src}
+                alt={`${property.name} architectural exterior`}
+                title={property.name}
+                className="w-full h-full object-cover"
+              />
+            )}
           </div>
 
           {/* Window frame overlay */}
