@@ -1,0 +1,78 @@
+{
+  "developments": [
+    {
+      "id": "the-citadel",
+      "name": "The Citadel",
+      "location": "Abuja, Nigeria",
+      "description": "Our flagship boutique development featuring only eight private residences, a secured lobby, an on-site security post, and signature craftsmanship designed for lasting calm.",
+      "status": "Ongoing",
+      "featured": true,
+      "displayOrder": 1,
+      "isComingSoon": false,
+      "externalUrl": "https://quoec.com/",
+      "featuredImage": "/media/properties/the-citadel-facade.jpg",
+      "galleryImages": [
+        "/media/properties/the-citadel-facade.jpg",
+        "/media/properties/the-citadel-entrance.jpg",
+        "/media/properties/the-citadel-parking.jpg",
+        "/media/properties/the-citadel-pool.jpg",
+        "/media/properties/the-citadel-pool-deck.jpg"
+      ],
+      "featuredVideo": "/media/properties/the-citadel.mp4",
+      "residenceSummary": "8 Boutique Residences · Secured Lobby · On-Site Security",
+      "updatedAt": "2026-11-20T15:01:37.718Z"
+    },
+    {
+      "id": "pavillion-villas",
+      "name": "Pavillion Villas",
+      "location": "Abuja, Nigeria",
+      "description": "Contemporary detached residences conceived around double-height living pavilions, natural limestone facades, private courtyard pools, and serene botanical privacy.",
+      "status": "Upcoming",
+      "featured": true,
+      "displayOrder": 2,
+      "isComingSoon": true,
+      "externalUrl": "",
+      "featuredImage": "/media/properties/pavillion-villas.jpg",
+      "galleryImages": [
+        "/media/properties/pavillion-villas.jpg"
+      ],
+      "featuredVideo": "/media/properties/pavillion-villas.mp4",
+      "residenceSummary": "Private Courtyard Villas · Botanical Enclave",
+      "updatedAt": "2026-11-20T15:01:37.718Z"
+    },
+    {
+      "id": "aurora-gardens",
+      "name": "Aurora Gardens",
+      "location": "Abuja, Nigeria",
+      "description": "A tranquil gated residential enclave blending warm sandstone architecture, shaded landscaped walkways, and generous family living spaces built to endure.",
+      "status": "Upcoming",
+      "featured": true,
+      "displayOrder": 3,
+      "isComingSoon": true,
+      "externalUrl": "",
+      "featuredImage": "/src/assets/images/property_aurora_gardens_1795186677556.jpg",
+      "galleryImages": [
+        "/src/assets/images/property_aurora_gardens_1795186677556.jpg"
+      ],
+      "residenceSummary": "Gated Garden Residences · Landscaped Courtyards",
+      "updatedAt": "2026-11-20T15:01:37.718Z"
+    },
+    {
+      "id": "the-urbane",
+      "name": "The Urbane",
+      "location": "Wuye, Abuja",
+      "description": "Elevated residences in Wuye featuring panoramic city views, expansive glass terraces, bespoke contemporary finishes, and discreet round-the-clock security.",
+      "status": "Upcoming",
+      "featured": false,
+      "displayOrder": 4,
+      "isComingSoon": true,
+      "externalUrl": "",
+      "featuredImage": "",
+      "galleryImages": [],
+      "featuredVideo": "/media/properties/the-urbane.mp4",
+      "residenceSummary": "Wuye Residences · Panoramic Terraces",
+      "updatedAt": "2026-11-20T15:01:37.718Z"
+    }
+  ],
+  "enquiries": []
+}
