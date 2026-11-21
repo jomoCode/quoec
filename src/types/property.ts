@@ -12,6 +12,8 @@ export interface Development {
   externalUrl: string;
   featuredImage: string;
   galleryImages: string[];
+  /** Optional walkthrough video; shown in place of the featured image when present. */
+  featuredVideo?: string;
   residenceSummary?: string;
   updatedAt: string;
 }
