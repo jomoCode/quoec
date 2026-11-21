@@ -1,21 +1,27 @@
-import { getSession, getVisitorId, saveSession } from './identity';
-import { local, readJSON, removeKey, writeJSON } from '../utils/storage';
-import { uuid } from '../utils/uuid';
-import { detectEnv, deviceType, isBot } from '../utils/environment';
-import { initTransport, send } from './transport';
-import { SCHEMA_VERSION, TAGS, type AnalyticsEvent, type TrackInput } from './types';
+import { getSession, getVisitorId, saveSession } from "./identity";
+import { local, readJSON, removeKey, writeJSON } from "../utils/storage";
+import { uuid } from "../utils/uuid";
+import { detectEnv, deviceType, isBot } from "../utils/environment";
+import { initTransport, send } from "./transport";
+import {
+  SCHEMA_VERSION,
+  TAGS,
+  WEBSITE_ID,
+  type AnalyticsEvent,
+  type TrackInput,
+} from "./types";
 
 const THROTTLE_MS = 1000; // same event+tag within this window = accidental double click
-const INTERNAL_KEY = 'qa_internal';
+const INTERNAL_KEY = "qa_internal";
 const MAX_SEEN = 500;
 
 const lastFired = new Map<string, number>();
 
 /** Visit any page with ?internal=1 once to exclude this browser (team traffic); ?internal=0 to undo. */
 function isInternal(): boolean {
-  const flag = new URLSearchParams(window.location.search).get('internal');
-  if (flag === '1') writeJSON(local, INTERNAL_KEY, true);
-  if (flag === '0') removeKey(local, INTERNAL_KEY);
+  const flag = new URLSearchParams(window.location.search).get("internal");
+  if (flag === "1") writeJSON(local, INTERNAL_KEY, true);
+  if (flag === "0") removeKey(local, INTERNAL_KEY);
   return readJSON<boolean>(local, INTERNAL_KEY) === true;
 }
 
@@ -25,12 +31,13 @@ function isInternal(): boolean {
  */
 export function track(input: TrackInput): void {
   try {
-    if (typeof window === 'undefined' || isBot() || isInternal()) return;
+    if (typeof window === "undefined" || isBot() || isInternal()) return;
     initTransport();
 
     const tagInfo = TAGS[input.tag];
     if (!tagInfo) {
-      if (import.meta.env.DEV) console.warn(`[analytics] unknown tag "${input.tag}" — add it to TAGS`);
+      if (import.meta.env.DEV)
+        console.warn(`[analytics] unknown tag "${input.tag}" — add it to TAGS`);
       return;
     }
 
@@ -46,7 +53,8 @@ export function track(input: TrackInput): void {
     const session = getSession();
 
     if (input.once) {
-      const onceKey = input.once === 'page' ? `${throttleKey}|${page}` : throttleKey;
+      const onceKey =
+        input.once === "page" ? `${throttleKey}|${page}` : throttleKey;
       if (session.seen.includes(onceKey)) {
         session.lastActivity = now;
         saveSession(session);
@@ -61,6 +69,7 @@ export function track(input: TrackInput): void {
 
     const width = window.innerWidth;
     const event: AnalyticsEvent = {
+      website_id: WEBSITE_ID,
       event_id: uuid(),
       name: input.name,
       tag: input.tag,
@@ -81,7 +90,7 @@ export function track(input: TrackInput): void {
 
     send(event);
   } catch (err) {
-    if (import.meta.env.DEV) console.warn('[analytics] track failed', err);
+    if (import.meta.env.DEV) console.warn("[analytics] track failed", err);
   }
 }
 
