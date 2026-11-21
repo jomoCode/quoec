@@ -24,7 +24,7 @@ const TRACK_RECORD = [
 
 export function AboutDeveloper() {
   return (
-    <section id="about" className="bg-[#F8F8F6] py-20 lg:py-24">
+    <section id="about" className="logo-watermark bg-[#F8F8F6] py-20 lg:py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           {/* Left: Company overview & logo */}

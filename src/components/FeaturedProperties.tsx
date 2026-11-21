@@ -212,7 +212,7 @@ function FeaturedShowcase({ featured }: { featured: Development[] }) {
     <section
       id="featured"
       ref={sectionRef}
-      className="bg-[#0B1829] text-white py-16 lg:py-20 border-t border-white/10 overflow-hidden"
+      className="bg-[#0B1829] bg-linear-to-r from-[#1C3F66] via-[#0B1829] to-[#1C3F66] text-white py-16 lg:py-20 border-t border-white/10 overflow-hidden"
     >
       <div ref={stageRef} className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header — sits at the top in its final (small) size; during the intro it is

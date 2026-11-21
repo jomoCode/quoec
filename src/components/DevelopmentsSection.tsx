@@ -159,7 +159,7 @@ export function DevelopmentsSection({ developments, loading }: DevelopmentsSecti
   const filters: StatusFilter[] = ['All', 'Ongoing', 'Upcoming', 'Completed'];
 
   return (
-    <section id="developments" className="bg-[#F8F8F6] pt-10 pb-16 lg:pt-12 lg:pb-20">
+    <section id="developments" className="logo-watermark bg-[#F8F8F6] pt-10 pb-16 lg:pt-12 lg:pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
           <div>

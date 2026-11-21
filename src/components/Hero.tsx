@@ -14,7 +14,7 @@ const HEADLINE_CLASSES =
  */
 export function Hero() {
   return (
-    <section id="top" className="bg-[#F8F8F6] text-[#0B1829]">
+    <section id="top" className="logo-watermark bg-[#F8F8F6] text-[#0B1829]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
         <div className="grid place-items-center text-center overflow-hidden">
           <p

@@ -52,3 +52,20 @@
   }
 }
 
+
+/* Faint brand watermark for light sections. The section becomes its own stacking
+   context so the ::before layer sits above the background but below all content. */
+@utility logo-watermark {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url("/assets/aistudio/quo-logo_7108c43a.png") center / min(70%, 820px) no-repeat;
+    opacity: 0.045;
+  }
+}

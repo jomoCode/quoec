@@ -25,7 +25,7 @@ const VALUES = [
 
 export function WhyChooseUs() {
   return (
-    <section id="why-choose-us" className="bg-white py-20 lg:py-24 border-y border-[#E5E4DF]">
+    <section id="why-choose-us" className="logo-watermark bg-white py-20 lg:py-24 border-y border-[#E5E4DF]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-stretch">
           {/* Left column: Full-height architectural terrace image */}

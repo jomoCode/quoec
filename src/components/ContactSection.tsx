@@ -73,7 +73,7 @@ export function ContactSection({ developments }: ContactSectionProps) {
   };
 
   return (
-    <section id="contact" className="relative bg-[#0B1829] text-white overflow-hidden">
+    <section id="contact" className="relative bg-[#0B1829] bg-linear-to-r from-[#1C3F66] via-[#0B1829] to-[#1C3F66] text-white overflow-hidden">
       {/* Twilight architectural backdrop */}
       <div className="absolute inset-0">
         <ArchitecturalImage
@@ -84,7 +84,7 @@ export function ContactSection({ developments }: ContactSectionProps) {
           className="w-full h-full object-cover opacity-35"
         />
         <div
-          className="absolute inset-0 bg-gradient-to-r from-[#0B1829]/95 via-[#0B1829]/88 to-[#0B1829]/85"
+          className="absolute inset-0 bg-linear-to-r from-[#1C3F66]/85 via-[#0B1829]/92 to-[#1C3F66]/85"
           aria-hidden="true"
         />
       </div>
