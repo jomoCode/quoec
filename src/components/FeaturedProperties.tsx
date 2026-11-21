@@ -269,14 +269,14 @@ function FeaturedShowcase({ featured }: { featured: Development[] }) {
 
         {/* Carousel — keeps its space during the intro so the header can be centered over it. */}
         <motion.div
-          className="relative"
+          className="relative max-w-5xl mx-auto"
           initial={false}
           animate={{ opacity: settled ? 1 : 0 }}
           transition={{ duration: 0.4, delay: settled && !prefersReducedMotion ? 0.5 : 0 }}
           aria-hidden={!settled}
         >
           <div
-            className="relative h-[70vh] min-h-[420px] max-h-[760px] overflow-hidden rounded-lg border border-white/10 bg-[#112238]"
+            className="relative h-[62vh] min-h-[380px] max-h-[600px] overflow-hidden rounded-lg border border-white/10 bg-[#112238]"
             role="region"
             aria-roledescription="carousel"
             aria-label="Featured developments"
