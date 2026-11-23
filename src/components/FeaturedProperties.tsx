@@ -41,7 +41,7 @@ function FeaturedSlide({ property }: { property: Development }) {
           src={property.featuredVideo}
           poster={property.featuredImage}
           label={`${property.name} in ${property.location}`}
-          className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none"
+          className="absolute inset-0 w-full h-full object-contain select-none pointer-events-none"
         />
       ) : (
         <ArchitecturalImage
@@ -222,8 +222,40 @@ function FeaturedShowcase({ featured }: { featured: Development[] }) {
     <section
       id="featured"
       ref={sectionRef}
-      className="bg-[#0B1829] bg-linear-to-r from-[#1C3F66] via-[#0B1829] to-[#1C3F66] text-white py-16 lg:py-20 border-t border-white/10 overflow-hidden"
+      className="relative isolate bg-[#0B1829] text-white py-16 lg:py-20 border-t border-white/10 overflow-hidden"
     >
+      {/* Ambient backdrop: the active development's video (or image), blurred and darkened. */}
+      <div className="absolute inset-0 -z-20" aria-hidden="true">
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={active.id}
+            className="absolute inset-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 1, ease: 'easeInOut' }}
+          >
+            {active.featuredVideo ? (
+              <PropertyVideo
+                src={active.featuredVideo}
+                poster={active.featuredImage}
+                decorative
+                className="absolute inset-0 size-full scale-125 object-cover blur-2xl"
+              />
+            ) : active.featuredImage ? (
+              <img
+                src={active.featuredImage}
+                alt=""
+                className="absolute inset-0 size-full scale-125 object-cover blur-2xl"
+              />
+            ) : null}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+      <div
+        className="absolute inset-0 -z-10 bg-linear-to-r from-[#07101C]/80 via-[#0B1829]/55 to-[#07101C]/80"
+        aria-hidden="true"
+      />
       <div ref={stageRef} className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header — sits at the top in its final (small) size; during the intro it is
             translated to the vertical center of the stage and scaled up. */}
@@ -269,14 +301,14 @@ function FeaturedShowcase({ featured }: { featured: Development[] }) {
 
         {/* Carousel — keeps its space during the intro so the header can be centered over it. */}
         <motion.div
-          className="relative max-w-5xl mx-auto"
+          className="relative max-w-4xl mx-auto"
           initial={false}
           animate={{ opacity: settled ? 1 : 0 }}
           transition={{ duration: 0.4, delay: settled && !prefersReducedMotion ? 0.5 : 0 }}
           aria-hidden={!settled}
         >
           <div
-            className="relative h-[62vh] min-h-[380px] max-h-[600px] overflow-hidden rounded-lg border border-white/10 bg-[#112238]"
+            className="relative aspect-[4/5] sm:aspect-video overflow-hidden rounded-lg border border-white/15 bg-[#07101C]/40 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)]"
             role="region"
             aria-roledescription="carousel"
             aria-label="Featured developments"
