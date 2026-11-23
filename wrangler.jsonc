@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Static-only Worker: serves the Vite build output from dist/.
+  "name": "quo-public-website",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    // Unknown paths fall back to index.html (single-page app).
+    "not_found_handling": "single-page-application"
+  }
+}

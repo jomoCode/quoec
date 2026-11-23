@@ -85,15 +85,38 @@ To exclude your own browser from analytics (team traffic), visit any page once w
 
 See [docs/analytics.md](docs/analytics.md) for the full design and how to track new events.
 
-## Deployment
+## Deployment (Cloudflare)
+
+The site deploys to Cloudflare as a static-assets Worker, configured in [wrangler.jsonc](wrangler.jsonc). Unknown paths fall back to `index.html`, and [public/_headers](public/_headers) sets security headers and caching (hashed `/assets/*` files are cached permanently, media for a day).
+
+### From your machine
 
 ```sh
-npm run build
+npx wrangler login     # once
+npm run deploy         # builds, then runs wrangler deploy
 ```
 
-Deploy the contents of `dist/` to any static host. Make sure:
+`npm run cf:dev` builds the site and serves it locally through Wrangler, so you can check headers and the SPA fallback before deploying.
 
-- The `VITE_*` variables are set at **build time** (Vite inlines them into the bundle).
-- The backend allows the site's origin via CORS.
+### From Git (Workers Builds)
+
+In the Cloudflare dashboard, go to **Workers & Pages → Create → Import a repository** and use:
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Deploy command | `npx wrangler deploy` |
+| Build variables | `VITE_API_BASE_URL`, `VITE_ANALYTICS_ENDPOINT`, `VITE_GA_MEASUREMENT_ID`, `VITE_ANALYTICS_SITE_ID` |
+
+The Node version is pinned to 22 in [.node-version](.node-version).
+
+To use **Cloudflare Pages** instead, set the build command to `npm run build` and the output directory to `dist`. Pages also reads `_headers` and serves a single-page app automatically.
+
+### Things to check
+
+- Set the `VITE_*` variables as **build** variables. Vite inlines them into the bundle, so runtime variables have no effect.
+- Set `VITE_API_BASE_URL`. This Worker serves static files only, so same-origin `/api/...` requests would get `index.html` back instead of data.
+- The backend must allow the site's domain (and any `*.workers.dev` preview URL) through CORS.
+- Cloudflare limits each static file to 25 MiB. The largest video is currently about 14 MB. Host larger videos on R2 or Cloudflare Stream.
 
 The build also copies `src/assets/` into `dist/src/assets/` so root-relative image URLs keep working in production — see the custom plugin in [vite.config.ts](vite.config.ts).
