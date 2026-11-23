@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import type { Development, DevelopmentStatus } from '../types/property';
 import { ArchitecturalImage } from './ArchitecturalImage';
-import windowFrame from '../assets/images/window-frame.png';
 
 interface DevelopmentsSectionProps {
   developments: Development[];
@@ -12,7 +11,7 @@ interface DevelopmentsSectionProps {
 type StatusFilter = 'All' | DevelopmentStatus;
 
 function DevelopmentCard({ property }: { property: Development }) {
-  // Only photos are shown through the window frame — videos don't suit this view.
+  // Only photos are shown on the card — videos don't suit this view.
   const images = (
     property.galleryImages && property.galleryImages.length > 0
       ? property.galleryImages
@@ -33,67 +32,66 @@ function DevelopmentCard({ property }: { property: Development }) {
   };
 
   return (
-    <article className="bg-white border border-[#E5E4DF] rounded-lg overflow-hidden flex flex-col justify-between transition-shadow duration-200 hover:shadow-md">
-      <div>
-        {/* Image Frame — property view seen through a window */}
-        <div className="relative aspect-[2/1] bg-[#1A140F] overflow-hidden">
-          {/* View behind the glass (inset matches the window PNG's transparent area) */}
-          <div className="absolute top-[5%] bottom-[7.5%] left-[10%] right-[10%] z-0">
-            <ArchitecturalImage
-              src={currentImage}
-              alt={`${property.name} architectural exterior`}
-              title={property.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
+    // tabIndex lets a tap on touch devices focus the card, revealing details via focus-within.
+    <article
+      tabIndex={0}
+      className="group relative aspect-[4/3] rounded-lg overflow-hidden bg-[#0B1829] transition-shadow duration-200 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B3C]"
+    >
+      <ArchitecturalImage
+        src={currentImage}
+        alt={`${property.name} architectural exterior`}
+        title={property.name}
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+      />
 
-          {/* Window frame overlay */}
-          <img
-            src={windowFrame}
-            alt=""
-            aria-hidden="true"
-            draggable={false}
-            className="absolute inset-0 w-full h-full z-10 pointer-events-none select-none"
-          />
-
-          {images.length > 1 && (
-            <div className="absolute bottom-[11%] right-[13%] z-20 flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => cycleImage(-1)}
-                aria-label={`Previous image of ${property.name}`}
-                className="w-8 h-8 rounded-full bg-[#0B1829]/75 text-white hover:bg-[#0B1829] flex items-center justify-center transition-colors cursor-pointer"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => cycleImage(1)}
-                aria-label={`Next image of ${property.name}`}
-                className="w-8 h-8 rounded-full bg-[#0B1829]/75 text-white hover:bg-[#0B1829] flex items-center justify-center transition-colors cursor-pointer"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
+      {images.length > 1 && (
+        <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5">
+          <button
+            type="button"
+            onClick={() => cycleImage(-1)}
+            aria-label={`Previous image of ${property.name}`}
+            className="w-8 h-8 rounded-full bg-[#0B1829]/70 text-white hover:bg-[#0B1829] flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            onClick={() => cycleImage(1)}
+            aria-label={`Next image of ${property.name}`}
+            className="w-8 h-8 rounded-full bg-[#0B1829]/70 text-white hover:bg-[#0B1829] flex items-center justify-center transition-colors cursor-pointer"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
+      )}
 
-        {/* Card Body */}
-        <div className="px-5 pt-4 pb-4">
-          {/* Unboxed metadata with typographic separator (Zero-Pill Discipline) */}
-          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-500 mb-1.5">
-            <span className="inline-flex items-center gap-1 text-slate-700">
-              <MapPin className="w-3.5 h-3.5 text-[#B4852B]" aria-hidden="true" />
+      {/* Bottom overlay: name + status always visible; details slide up on hover/focus */}
+      <div className="absolute inset-x-0 bottom-0 z-10">
+        {/* Legibility gradient (collapsed) */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-x-0 bottom-0 h-[220%] bg-gradient-to-t from-[#0B1829]/90 via-[#0B1829]/40 to-transparent pointer-events-none"
+        />
+        {/* Solid backdrop (expanded) */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-[#0B1829]/85 backdrop-blur-sm opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100"
+        />
+
+        <div className="relative px-5 pt-4 pb-4">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-white/75 mb-1">
+            <span className="inline-flex items-center gap-1 text-white/90">
+              <MapPin className="w-3.5 h-3.5 text-[#C89B3C]" aria-hidden="true" />
               {property.location}
             </span>
             <span aria-hidden="true">·</span>
             <span
               className={
                 property.status === 'Completed'
-                  ? 'text-emerald-700 font-semibold'
+                  ? 'text-emerald-300 font-semibold'
                   : property.status === 'Ongoing'
-                    ? 'text-[#0B1829] font-semibold'
-                    : 'text-amber-700 font-semibold'
+                    ? 'text-[#E2C27A] font-semibold'
+                    : 'text-amber-300 font-semibold'
               }
             >
               {property.status}
@@ -101,51 +99,57 @@ function DevelopmentCard({ property }: { property: Development }) {
             {property.isComingSoon && (
               <>
                 <span aria-hidden="true">·</span>
-                <span className="text-slate-500">Coming Soon</span>
+                <span>Coming Soon</span>
               </>
             )}
           </div>
 
-          <h3 className="font-serif text-xl font-semibold text-[#0B1829] mb-1.5">
+          <h3 className="font-serif text-xl sm:text-2xl font-semibold text-white">
             {property.name}
           </h3>
 
-          <p className="text-sm text-slate-600 leading-relaxed line-clamp-2 mb-2">
-            {property.description}
-          </p>
+          {/* Collapsible details — grid-rows trick animates to content height */}
+          <div className="grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out group-hover:grid-rows-[1fr] group-focus-within:grid-rows-[1fr]">
+            <div className="overflow-hidden">
+              <div className="pt-2 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:translate-y-0">
+                <p className="text-sm text-white/80 leading-relaxed line-clamp-3 mb-2">
+                  {property.description}
+                </p>
 
-          {property.residenceSummary && (
-            <p className="text-xs text-slate-500 font-medium">
-              {property.residenceSummary}
-            </p>
-          )}
-        </div>
-      </div>
+                {property.residenceSummary && (
+                  <p className="text-xs text-white/60 font-medium mb-3">
+                    {property.residenceSummary}
+                  </p>
+                )}
 
-      {/* Action Footer */}
-      <div className="px-5 py-3 border-t border-[#ECEAE4] bg-[#FCFCFA]">
-        {isActiveLink ? (
-          <a
-            href={property.externalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-between w-full text-sm font-semibold text-[#0B1829] hover:text-[#B4852B] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B3C] rounded"
-          >
-            <span>Explore Property Website</span>
-            <span className="inline-flex items-center gap-1 text-[#B4852B]">
-              <span>Visit Site</span>
-              <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-            </span>
-          </a>
-        ) : (
-          <div
-            aria-disabled="true"
-            className="flex items-center justify-between w-full text-sm font-medium text-slate-400 cursor-default select-none"
-          >
-            <span>Coming Soon</span>
-            <span className="text-xs text-slate-400">Details releasing shortly</span>
+                <div className="pt-3 border-t border-white/15">
+                  {isActiveLink ? (
+                    <a
+                      href={property.externalUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-between w-full text-sm font-semibold text-white hover:text-[#E2C27A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B3C] rounded"
+                    >
+                      <span>Explore Property Website</span>
+                      <span className="inline-flex items-center gap-1 text-[#E2C27A]">
+                        <span>Visit Site</span>
+                        <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
+                      </span>
+                    </a>
+                  ) : (
+                    <div
+                      aria-disabled="true"
+                      className="flex items-center justify-between w-full text-sm font-medium text-white/50 cursor-default select-none"
+                    >
+                      <span>Coming Soon</span>
+                      <span className="text-xs">Details releasing shortly</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </article>
   );
@@ -216,13 +220,11 @@ export function DevelopmentsSection({ developments, loading }: DevelopmentsSecti
             {[1, 2, 3, 4].map((n) => (
               <div
                 key={n}
-                className="bg-white border border-[#E5E4DF] rounded-lg overflow-hidden animate-pulse"
+                className="relative aspect-[4/3] bg-[#ECEAE4] rounded-lg overflow-hidden animate-pulse"
               >
-                <div className="aspect-[2/1] bg-[#ECEAE4]" />
-                <div className="p-6 space-y-3">
-                  <div className="h-3 w-36 bg-[#ECEAE4] rounded" />
-                  <div className="h-6 w-48 bg-[#ECEAE4] rounded" />
-                  <div className="h-4 w-full bg-[#ECEAE4] rounded" />
+                <div className="absolute bottom-5 left-5 space-y-2">
+                  <div className="h-3 w-36 bg-[#DCDAD3] rounded" />
+                  <div className="h-6 w-48 bg-[#DCDAD3] rounded" />
                 </div>
               </div>
             ))}
