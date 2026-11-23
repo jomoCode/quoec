@@ -4,67 +4,97 @@ import type { Development } from "../types/property";
 import { ArchitecturalImage } from "./ArchitecturalImage";
 import { GlassButton } from "./GlassButton";
 import { track } from "../analytics";
-import { apiUrl } from "../utils/api";
+import { ApiError } from "../utils/api";
+import { submitEnquiry } from "../utils/enquiries";
 
 interface ContactSectionProps {
   developments: Development[];
+}
+
+/** "" = general enquiry. */
+const GENERAL = "";
+
+// Same rules as citadel-api's EnquiryCreate, so the form never sends what the API will reject.
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_RE = /^\+?[0-9 ()-]{7,20}$/;
+const MIN_MESSAGE = 10;
+
+const FIELD_LABELS: Record<string, string> = {
+  name: "Full name",
+  email: "Email address",
+  phone: "Phone number",
+  message: "Message",
+};
+
+function describeError(err: unknown): string {
+  if (err instanceof ApiError) {
+    if (err.status === 429) return "Too many enquiries from this connection. Please try again shortly.";
+    const fields = Object.keys(err.fields ?? {}).map((k) => FIELD_LABELS[k] ?? k);
+    if (fields.length) return `Please check: ${fields.join(", ")}.`;
+    return err.message;
+  }
+  return "Unable to send enquiry. Please check your connection and try again.";
 }
 
 export function ContactSection({ developments }: ContactSectionProps) {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [propertyInterest, setPropertyInterest] = useState("The Citadel");
+  const [developmentSlug, setDevelopmentSlug] = useState("the-citadel");
   const [message, setMessage] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [marketingOptIn, setMarketingOptIn] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+
+  // Keep the selection valid if the list loads without the default development.
+  const selectedSlug =
+    developmentSlug === GENERAL || developments.some((d) => d.id === developmentSlug)
+      ? developmentSlug
+      : (developments[0]?.id ?? GENERAL);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    if (!fullName.trim() || !email.trim() || !message.trim()) {
-      setError(
-        "Please complete your name, email address, and enquiry message.",
-      );
+    if (fullName.trim().length < 2 || !email.trim() || !phone.trim() || !message.trim()) {
+      setError("Please complete your name, email address, phone number and enquiry message.");
       return;
     }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email.trim())) {
+    if (!EMAIL_RE.test(email.trim())) {
       setError("Please enter a valid email address.");
+      return;
+    }
+    if (!PHONE_RE.test(phone.trim())) {
+      setError("Please enter a valid phone number, e.g. +234 800 000 0000.");
+      return;
+    }
+    if (message.trim().length < MIN_MESSAGE) {
+      setError(`Please write a little more in your message (at least ${MIN_MESSAGE} characters).`);
+      return;
+    }
+    if (!consent) {
+      setError("Please agree to be contacted about your enquiry.");
       return;
     }
 
     setSubmitting(true);
     try {
-      const response = await fetch(apiUrl("/api/enquiries"), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName: fullName.trim(),
-          email: email.trim(),
-          phone: phone.trim(),
-          propertyInterest,
-          message: message.trim(),
-        }),
+      await submitEnquiry({
+        name: fullName,
+        email,
+        phone,
+        developmentSlug: selectedSlug,
+        message,
+        marketingOptIn,
       });
-
-      if (!response.ok) {
-        const payload = (await response.json().catch(() => ({}))) as {
-          error?: string;
-        };
-        throw new Error(
-          payload.error || "Unable to submit enquiry. Please try again.",
-        );
-      }
 
       // Conversion is counted on confirmed success, not on the button press.
       track({
         name: "generate_lead",
         tag: "contact_form_submit",
-        meta: { property_interest: propertyInterest },
+        meta: { property_interest: selectedSlug || "general" },
       });
 
       setSubmitted(true);
@@ -72,8 +102,10 @@ export function ContactSection({ developments }: ContactSectionProps) {
       setEmail("");
       setPhone("");
       setMessage("");
+      setConsent(false);
+      setMarketingOptIn(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Unable to send enquiry.");
+      setError(describeError(err));
     } finally {
       setSubmitting(false);
     }
@@ -227,11 +259,13 @@ export function ContactSection({ developments }: ContactSectionProps) {
                       htmlFor="enquiry-phone"
                       className="block text-xs font-semibold text-slate-700 mb-1.5"
                     >
-                      Phone Number
+                      Phone Number *
                     </label>
                     <input
                       id="enquiry-phone"
                       type="tel"
+                      required
+                      autoComplete="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+234 800 000 0000"
@@ -247,18 +281,16 @@ export function ContactSection({ developments }: ContactSectionProps) {
                     </label>
                     <select
                       id="enquiry-property"
-                      value={propertyInterest}
-                      onChange={(e) => setPropertyInterest(e.target.value)}
+                      value={selectedSlug}
+                      onChange={(e) => setDevelopmentSlug(e.target.value)}
                       className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C89B3C] focus:border-[#C89B3C]"
                     >
                       {developments.map((dev) => (
-                        <option key={dev.id} value={dev.name}>
+                        <option key={dev.id} value={dev.id}>
                           {dev.name} ({dev.status})
                         </option>
                       ))}
-                      <option value="General Portfolio Enquiry">
-                        General Portfolio Enquiry
-                      </option>
+                      <option value={GENERAL}>General Portfolio Enquiry</option>
                     </select>
                   </div>
                 </div>
@@ -279,6 +311,31 @@ export function ContactSection({ developments }: ContactSectionProps) {
                     placeholder="Share your residence preferences, investment goals, or preferred viewing date."
                     className="w-full px-3.5 py-2.5 text-sm bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#C89B3C] focus:border-[#C89B3C]"
                   />
+                </div>
+
+                <div className="space-y-2.5 text-sm text-slate-700">
+                  <label className="flex items-start gap-2.5">
+                    <input
+                      type="checkbox"
+                      required
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 shrink-0 accent-[#C89B3C]"
+                    />
+                    <span>
+                      I agree to Quo Engineering &amp; Construction contacting me about this
+                      enquiry. *
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-2.5">
+                    <input
+                      type="checkbox"
+                      checked={marketingOptIn}
+                      onChange={(e) => setMarketingOptIn(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 shrink-0 accent-[#C89B3C]"
+                    />
+                    <span>Send me news about new developments (optional).</span>
+                  </label>
                 </div>
 
                 <GlassButton

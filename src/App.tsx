@@ -7,31 +7,23 @@ import { WhyChooseUs } from "./components/WhyChooseUs";
 import { AboutDeveloper } from "./components/AboutDeveloper";
 import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
-import { apiUrl } from "./utils/api";
+import { loadDevelopments } from "./utils/developments";
 
 export default function App() {
   const [developments, setDevelopments] = useState<Development[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let active = true;
-    async function loadDevelopments() {
-      try {
-        const res = await fetch(apiUrl("/api/developments"));
-        if (res.ok && active) {
-          const data = (await res.json()) as Development[];
-          setDevelopments(data);
-        }
-      } catch {
-        // Fallback handled smoothly by loading state
-      } finally {
-        if (active) setLoading(false);
-      }
-    }
-    loadDevelopments();
-    return () => {
-      active = false;
-    };
+    const controller = new AbortController();
+    loadDevelopments(controller.signal)
+      .then((data) => setDevelopments(data))
+      .catch(() => {
+        // Only an abort (unmount) reaches here; loadDevelopments handles its own fallback.
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
   }, []);
 
   const scrollToContact = () => {

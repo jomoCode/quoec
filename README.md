@@ -30,7 +30,9 @@ All variables are optional; the site runs without them, but developments and enq
 
 | Variable | Purpose |
 | --- | --- |
-| `VITE_API_BASE_URL` | Origin of the backend API, e.g. `https://api.example.com`. If unset, the app calls same-origin paths like `/api/developments`. |
+| `VITE_API_BASE_URL` | citadel-api host, e.g. `https://citadel-api.kojoansah.workers.dev`. `/api/v1` is added automatically. If unset, the site shows the built-in content from `data/portfolio.json`. |
+| `VITE_WEBSITE_ID` | This site's id on the backend, sent as `X-Website-Id`. Defaults to `quoec`. |
+| `VITE_CONTENT_FALLBACK` | `seed` (default) shows `data/portfolio.json` if the API is unset or unreachable; `none` shows nothing. |
 | `VITE_ANALYTICS_SITE_ID` | Identifier for this site in a shared analytics database. Defaults to `quo-public-website`. |
 | `VITE_ANALYTICS_ENDPOINT` | Backend endpoint that accepts batched analytics events (`POST { events: [...] }`). |
 | `VITE_GA_MEASUREMENT_ID` | Google Analytics 4 ID (`G-XXXXXXXXXX`). gtag is loaded automatically when set. |
@@ -69,11 +71,19 @@ With no analytics endpoint or GA ID configured, events are only logged to the br
 
 The site relies on these endpoints from the external backend:
 
-- `GET /api/developments` — list of public developments in display order
-- `POST /api/enquiries` — submit a contact/enquiry form
-- `POST /api/analytics` — batched analytics events (optional)
+The backend is [citadel-api](../citadel-api). Every request sends `X-Website-Id: quoec`.
 
-Request/response shapes, error format, the admin app contract and CORS requirements are in [docs/backend-api.md](docs/backend-api.md). `data/portfolio.json` contains example development records in the expected shape.
+- `GET /api/v1/public/developments` — published developments for the `quoec` site (snake_case; mapped to the `Development` type in [src/utils/developments.ts](src/utils/developments.ts))
+- `POST /api/v1/public/enquiries` — contact form ([src/utils/enquiries.ts](src/utils/enquiries.ts)); needs `name`, `email`, `phone`, `enquiryType`, a message of 10+ characters and `consent_given: true`
+- Errors come back as `{ "error": { "code", "message", "details": { "fields": {...} } } }`
+
+Analytics: citadel-api's `POST /api/v1/public/events` takes one `{ event, properties, path }` per request, which does not match this site's batched format, so leave `VITE_ANALYTICS_ENDPOINT` unset for now.
+
+[docs/backend-api.md](docs/backend-api.md) describes the original, pre-citadel-api contract.
+
+### Seeding production
+
+`data/portfolio.json` is also the seed for the backend. [scripts/seed-production.py](scripts/seed-production.py) uploads its images to the Supabase `marketing` bucket and upserts the rows for the `quoec` site. It is a dry run unless you pass `--apply`.
 
 Media paths such as `/media/properties/the-citadel-facade.jpg` are served from this frontend's `public/` folder unless the API returns full URLs.
 
