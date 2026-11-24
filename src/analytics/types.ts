@@ -8,9 +8,14 @@ import type { AppEnv, DeviceType } from "../utils/environment";
 /** Bump when the event shape changes so old/new rows can be told apart. */
 export const SCHEMA_VERSION = 3; // v3: adds website_id for filtering events by website
 
-/** Stable identifier for this website when analytics is stored in a shared database. */
+/**
+ * Stable identifier for this website when analytics is stored in a shared database.
+ * The same id the backend knows this site by (VITE_WEBSITE_ID, sent as X-Website-Id), so analytics and content agree.
+ */
 export const WEBSITE_ID: string =
-  import.meta.env.VITE_ANALYTICS_SITE_ID?.trim() || "quo-public-website";
+  import.meta.env.VITE_WEBSITE_ID?.trim().toLowerCase() ||
+  import.meta.env.VITE_ANALYTICS_SITE_ID?.trim() ||
+  "quoec";
 
 /**
  * Event names: specific actions, snake_case, <= 40 chars (GA4 rules).

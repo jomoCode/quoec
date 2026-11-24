@@ -7,9 +7,13 @@ import { WhyChooseUs } from "./components/WhyChooseUs";
 import { AboutDeveloper } from "./components/AboutDeveloper";
 import { ContactSection } from "./components/ContactSection";
 import { Footer } from "./components/Footer";
+import { LegalPage } from "./components/LegalPage";
+import { legalSlugFromPath } from "./content/legal";
 import { loadDevelopments } from "./utils/developments";
 
 export default function App() {
+  // The Worker serves index.html for every path (single-page app), so /legal/<slug> is picked here.
+  const legalSlug = legalSlugFromPath(window.location.pathname);
   const [developments, setDevelopments] = useState<Development[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,6 +34,8 @@ export default function App() {
     const el = document.getElementById("contact");
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
+    } else {
+      window.location.href = "/#contact"; // e.g. from a legal page
     }
   };
 
@@ -37,12 +43,18 @@ export default function App() {
     <div className="min-h-screen flex flex-col bg-[#F8F8F6] text-[#0B1829]">
       <Navbar onNavigateContact={scrollToContact} />
       <main className="flex-1">
-        {/* <Hero /> */}
-        <DevelopmentsSection developments={developments} loading={loading} />
-        <FeaturedProperties developments={developments} />
-        <WhyChooseUs />
-        <AboutDeveloper />
-        <ContactSection developments={developments} />
+        {legalSlug ? (
+          <LegalPage slug={legalSlug} />
+        ) : (
+          <>
+            {/* <Hero /> */}
+            <DevelopmentsSection developments={developments} loading={loading} />
+            <FeaturedProperties developments={developments} />
+            <WhyChooseUs />
+            <AboutDeveloper />
+            <ContactSection developments={developments} />
+          </>
+        )}
       </main>
       <Footer />
     </div>

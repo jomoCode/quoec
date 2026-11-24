@@ -12,10 +12,10 @@ export function Navbar({ onNavigateContact }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const navLinks = [
-    { label: 'Developments', href: '#developments' },
-    { label: 'Featured', href: '#featured' },
-    { label: 'Why Quo', href: '#why-choose-us' },
-    { label: 'About Us', href: '#about' },
+    { label: 'Developments', href: '/#developments' },
+    { label: 'Featured', href: '/#featured' },
+    { label: 'Why Quo', href: '/#why-choose-us' },
+    { label: 'About Us', href: '/#about' },
   ];
 
   const handleLinkClick = () => {
@@ -27,7 +27,7 @@ export function Navbar({ onNavigateContact }: NavbarProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-8">
         {/* Zone 1: Brand Wordmark / Logo */}
         <a
-          href="#top"
+          href="/#top"
           className="flex items-center whitespace-nowrap shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A21] rounded"
           aria-label="Quo Engineering & Construction Home"
         >

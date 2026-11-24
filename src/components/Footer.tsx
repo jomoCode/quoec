@@ -1,4 +1,5 @@
 import { MapPin } from "lucide-react";
+import { LEGAL_LINKS } from "../content/legal";
 
 export function Footer() {
   return (
@@ -23,28 +24,28 @@ export function Footer() {
             className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-300"
           >
             <a
-              href="#developments"
+              href="/#developments"
               className="hover:text-[#E2B45A] transition-colors"
             >
               Our Developments
             </a>
             <a
-              href="#featured"
+              href="/#featured"
               className="hover:text-[#E2B45A] transition-colors"
             >
               Featured Properties
             </a>
             <a
-              href="#why-choose-us"
+              href="/#why-choose-us"
               className="hover:text-[#E2B45A] transition-colors"
             >
               Why Choose Us
             </a>
-            <a href="#about" className="hover:text-[#E2B45A] transition-colors">
+            <a href="/#about" className="hover:text-[#E2B45A] transition-colors">
               About Quo
             </a>
             <a
-              href="#contact"
+              href="/#contact"
               className="hover:text-[#E2B45A] transition-colors"
             >
               Contact
@@ -57,6 +58,14 @@ export function Footer() {
             © {new Date().getFullYear()} Quo Engineering &amp; Construction
             Limited. All rights reserved.
           </p>
+
+          <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            {LEGAL_LINKS.map((link) => (
+              <a key={link.slug} href={`/legal/${link.slug}`} className="hover:text-[#E2B45A] transition-colors">
+                {link.label}
+              </a>
+            ))}
+          </nav>
 
           <div className="flex items-center">
             <span className="inline-flex items-center gap-1.5">

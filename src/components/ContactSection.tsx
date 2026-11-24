@@ -324,7 +324,11 @@ export function ContactSection({ developments }: ContactSectionProps) {
                     />
                     <span>
                       I agree to Quo Engineering &amp; Construction contacting me about this
-                      enquiry. *
+                      enquiry, as described in the{" "}
+                      <a href="/legal/privacy" target="_blank" rel="noreferrer" className="underline underline-offset-2 hover:text-[#C89B3C]">
+                        privacy policy
+                      </a>
+                      . *
                     </span>
                   </label>
                   <label className="flex items-start gap-2.5">

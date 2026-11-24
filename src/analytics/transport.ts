@@ -1,15 +1,32 @@
 import type { AnalyticsEvent } from "./types";
 import { local, readJSON, removeKey, writeJSON } from "../utils/storage";
+import { WEBSITE_ID as API_WEBSITE_ID, apiUrl, hasApi } from "../utils/api";
 
 /**
  * The only file that knows where events go.
- * - Backend: set VITE_ANALYTICS_ENDPOINT (e.g. /api/analytics). Receives { events: AnalyticsEvent[] }.
- *   It must insert with `on conflict (event_id) do nothing` — retries and beacons may resend events.
+ * - Backend: citadel-api POST /api/v1/public/analytics/events, derived from VITE_API_BASE_URL. Receives
+ *   { events: AnalyticsEvent[] } and stores each event_id once — retries and beacons may resend events.
+ *   VITE_ANALYTICS_ENDPOINT overrides the address; set it to "off" to keep events in the console.
  * - GA4: set VITE_GA_MEASUREMENT_ID. gtag is loaded automatically.
  * With neither set (or in dev), events are logged to the console.
  */
 
-const ENDPOINT: string | undefined = import.meta.env.VITE_ANALYTICS_ENDPOINT;
+/** The website travels in the query string too: beacons can't send the X-Website-Id header. */
+function resolveEndpoint(): string | undefined {
+  const override = import.meta.env.VITE_ANALYTICS_ENDPOINT?.trim();
+  if (override === "off") return undefined;
+  const base = override || (hasApi ? apiUrl("/public/analytics/events") : "");
+  if (!base) return undefined;
+  try {
+    const url = new URL(base, window.location.origin);
+    url.searchParams.set("website_id", API_WEBSITE_ID);
+    return url.toString();
+  } catch {
+    return undefined;
+  }
+}
+
+const ENDPOINT: string | undefined = typeof window === "undefined" ? undefined : resolveEndpoint();
 const GA_ID: string | undefined = import.meta.env.VITE_GA_MEASUREMENT_ID;
 
 const QUEUE_KEY = "qa_queue";
@@ -75,7 +92,7 @@ async function flush() {
   try {
     const res = await fetch(ENDPOINT, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "X-Website-Id": API_WEBSITE_ID },
       body: JSON.stringify({ events: batch }),
       keepalive: true,
     });
@@ -98,10 +115,11 @@ async function flush() {
 function flushWithBeacon() {
   if (!ENDPOINT || !queue.length || typeof navigator.sendBeacon !== "function")
     return;
+  // text/plain: browsers refuse cross-origin beacons with application/json. The API parses the body either way.
   const blob = new Blob(
     [JSON.stringify({ events: queue.slice(0, MAX_BATCH) })],
     {
-      type: "application/json",
+      type: "text/plain;charset=UTF-8",
     },
   );
   // sendBeacon gives no delivery confirmation, so events stay queued; if they are resent
