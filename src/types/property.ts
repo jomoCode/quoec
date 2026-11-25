@@ -1,5 +1,12 @@
 export type DevelopmentStatus = 'Upcoming' | 'Ongoing' | 'Completed';
 
+/** What visitors see for each status. The API's "ongoing" is shown as "Now Selling". */
+export const STATUS_LABEL: Record<DevelopmentStatus, string> = {
+  Upcoming: 'Upcoming',
+  Ongoing: 'Now Selling',
+  Completed: 'Completed',
+};
+
 export interface Development {
   id: string;
   name: string;

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
 import type { PanInfo } from 'motion/react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, Lock, MapPin } from 'lucide-react';
-import type { Development } from '../types/property';
+import { STATUS_LABEL, type Development } from '../types/property';
 import { ArchitecturalImage } from './ArchitecturalImage';
 import { PropertyVideo } from './PropertyVideo';
 
@@ -32,7 +32,7 @@ const slideVariants = {
 };
 
 function FeaturedSlide({ property }: { property: Development }) {
-  const isActiveLink = !property.isComingSoon && Boolean(property.externalUrl);
+  const isActiveLink = Boolean(property.externalUrl);
 
   return (
     <div className="absolute inset-0">
@@ -67,8 +67,8 @@ function FeaturedSlide({ property }: { property: Development }) {
           <MapPin className="w-3.5 h-3.5 text-[#E2B45A]" aria-hidden="true" />
           {property.location}
         </span>
-        <span className={isActiveLink ? 'text-[#E2B45A]' : 'text-slate-300'}>
-          {isActiveLink ? property.status : 'Coming Soon'}
+        <span className={property.isComingSoon ? 'text-slate-300' : 'text-[#E2B45A]'}>
+          {property.isComingSoon ? 'Coming Soon' : STATUS_LABEL[property.status]}
         </span>
       </div>
 
@@ -76,7 +76,7 @@ function FeaturedSlide({ property }: { property: Development }) {
       <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 lg:p-12">
         <div className="max-w-xl space-y-3">
           <p className="text-xs sm:text-sm font-medium text-[#E2B45A]">
-            {property.residenceSummary || property.status}
+            {property.residenceSummary || STATUS_LABEL[property.status]}
           </p>
           <h3 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-semibold text-white">
             {property.name}

@@ -31,7 +31,7 @@
       "featured": true,
       "displayOrder": 2,
       "isComingSoon": true,
-      "externalUrl": "",
+      "externalUrl": "https://pavillion.quoec.com",
       "featuredImage": "/media/properties/pavillion-villas.jpg",
       "galleryImages": [
         "/media/properties/pavillion-villas.jpg"
@@ -49,7 +49,7 @@
       "featured": true,
       "displayOrder": 3,
       "isComingSoon": true,
-      "externalUrl": "",
+      "externalUrl": "https://aurora.quoec.com",
       "featuredImage": "/src/assets/images/property_aurora_gardens_1795186677556.jpg",
       "galleryImages": [
         "/src/assets/images/property_aurora_gardens_1795186677556.jpg"
@@ -66,7 +66,7 @@
       "featured": false,
       "displayOrder": 4,
       "isComingSoon": true,
-      "externalUrl": "",
+      "externalUrl": "https://theurbane.quoec.com",
       "featuredImage": "",
       "galleryImages": [],
       "featuredVideo": "/media/properties/the-urbane.mp4",

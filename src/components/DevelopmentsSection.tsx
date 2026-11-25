@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
-import type { Development, DevelopmentStatus } from '../types/property';
+import { STATUS_LABEL, type Development, type DevelopmentStatus } from '../types/property';
 import { ArchitecturalImage } from './ArchitecturalImage';
 
 interface DevelopmentsSectionProps {
@@ -19,7 +19,7 @@ function DevelopmentCard({ property }: { property: Development }) {
   ).filter(Boolean);
   const [imageIndex, setImageIndex] = useState(0);
 
-  const isActiveLink = !property.isComingSoon && Boolean(property.externalUrl);
+  const isActiveLink = Boolean(property.externalUrl);
   const currentImage = images[imageIndex] ?? property.featuredImage;
 
   const cycleImage = (direction: 1 | -1) => {
@@ -94,7 +94,7 @@ function DevelopmentCard({ property }: { property: Development }) {
                     : 'text-amber-300 font-semibold'
               }
             >
-              {property.status}
+              {STATUS_LABEL[property.status]}
             </span>
             {property.isComingSoon && (
               <>
@@ -199,7 +199,7 @@ export function DevelopmentsSection({ developments, loading }: DevelopmentsSecti
                         : 'text-slate-600 hover:text-[#0B1829]'
                     }`}
                   >
-                    {filter}
+                    {filter === 'All' ? filter : STATUS_LABEL[filter]}
                   </button>
                 );
               })}
