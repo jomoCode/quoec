@@ -35,8 +35,17 @@ function DevelopmentCard({ property }: { property: Development }) {
     // tabIndex lets a tap on touch devices focus the card, revealing details via focus-within.
     <article
       tabIndex={0}
-      className="group relative aspect-[4/3] rounded-lg overflow-hidden bg-[#0B1829] transition-shadow duration-200 hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B3C]"
+      className="group relative aspect-[4/3] rounded-md overflow-hidden bg-[#0B1829] border border-[#C89B3C] ring-1 ring-[#C89B3C]/45 ring-offset-4 ring-offset-[#F8F8F6] shadow-[0_18px_40px_-22px_rgba(11,24,41,0.55)] transition-shadow duration-300 hover:ring-[#C89B3C] hover:shadow-[0_26px_55px_-20px_rgba(11,24,41,0.7)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C89B3C]"
     >
+      {/* Luxury frame: an outer gold line with an offset hairline (above), plus an inner
+          hairline and gold corner brackets drawn over the photo. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-30">
+        <div className="absolute inset-2.5 rounded-sm border border-[#E2C27A]/40 transition-colors duration-300 group-hover:border-[#E2C27A]/70" />
+        <span className="absolute top-1.5 left-1.5 w-5 h-5 border-t-2 border-l-2 border-[#E2C27A]" />
+        <span className="absolute top-1.5 right-1.5 w-5 h-5 border-t-2 border-r-2 border-[#E2C27A]" />
+        <span className="absolute bottom-1.5 left-1.5 w-5 h-5 border-b-2 border-l-2 border-[#E2C27A]" />
+        <span className="absolute bottom-1.5 right-1.5 w-5 h-5 border-b-2 border-r-2 border-[#E2C27A]" />
+      </div>
       <ArchitecturalImage
         src={currentImage}
         alt={`${property.name} architectural exterior`}
@@ -45,7 +54,7 @@ function DevelopmentCard({ property }: { property: Development }) {
       />
 
       {images.length > 1 && (
-        <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5">
+        <div className="absolute top-5 right-5 z-20 flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => cycleImage(-1)}
@@ -78,7 +87,7 @@ function DevelopmentCard({ property }: { property: Development }) {
           className="absolute inset-0 bg-[#0B1829]/85 backdrop-blur-sm opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-within:opacity-100"
         />
 
-        <div className="relative px-5 pt-4 pb-4">
+        <div className="relative px-6 pt-4 pb-6">
           <div className="flex flex-wrap items-center gap-2 text-xs font-medium text-white/75 mb-1">
             <span className="inline-flex items-center gap-1 text-white/90">
               <MapPin className="w-3.5 h-3.5 text-[#C89B3C]" aria-hidden="true" />
